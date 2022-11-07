@@ -1,0 +1,22 @@
+{
+  "name": "GeoGuessrExtension",
+  "description": "Created by hageron",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_icon": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.geoguessr.com/challenge/*"],
+      "js": [
+        "ws.js",
+        "ad.js",
+        "Ready.js",
+        "Ranking.js",
+        "capture.js"
+      ]
+    }
+  ],
+  "permissions": ["scripting"]
+}
