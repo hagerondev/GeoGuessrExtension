@@ -17,10 +17,10 @@ class WS {
 			}))
 		}
 		this.ws.onmessage = (event) => {
-			const data = JSON.parse(event.data);
-			console.log("ws receive",data)
-			if (reloadStatus) reloadStatus(data);
-			if (reloadRanking) reloadRanking(data);
+			let resData = JSON.parse(event.data);
+			console.log("ws receive",resData)
+			if (reloadStatus) reloadStatus(resData);
+			if (reloadRanking) reloadRanking(resData);
 
 		}
 		this.ws.onclose = (event) => {

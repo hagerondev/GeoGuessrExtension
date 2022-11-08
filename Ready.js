@@ -18,13 +18,14 @@ if (document.body.innerText.includes("You have been challenged!")) {
 	let ready_button = '<button id="readyButton" type="button" class="'+start_button.className+'" style="margin-left: 15px;background-color: orange;">Ready!</button>';
 	start_button.insertAdjacentHTML("afterend",entry)
 	start_button.insertAdjacentHTML("afterend",ready_button)
-	start_button.style.display = "none";
+	// start_button.style.display = "none";
 	document.getElementById("readyButton").addEventListener("click", removeReady);
 }
 // document.body.innerText.includes("PLAY NEXT ROUND")
 
 function roundPrepare() {
 	// 全員の「READY!」を待っています 参加者
+	let visible = false;
 	let entry = `
 	<div id="ggeStatusCover" style="display:flex;justify-content:center;flex-direction:column;font-size: 1.2em;line-height: 2em;margin: 20px auto;text-align: center;">
 	    <h3 style=""></h3>
@@ -32,6 +33,7 @@ function roundPrepare() {
 	    <div id="ggeStatus"></div>
 	</div>
 	`
+	if (!visible) entry = '<div style="display:none">'+entry+'</div>'
 	let start_button = document.querySelectorAll('[data-qa="close-round-result"]')[0];
 	let ready_button = '<button id="readyButton" type="button" class="'+start_button.className+'" style="margin-left: 15px;background-color: orange;">Ready!</button>';
 	start_button.insertAdjacentHTML("afterend",entry)
@@ -39,7 +41,7 @@ function roundPrepare() {
 	document.getElementById("readyButton").addEventListener("click", removeReady);
 	let next_button = document.querySelectorAll('[data-qa="close-round-result"]')[0];
 	if (next_button!==undefined) {
-		next_button.style.display = "none";	
+		// next_button.style.display = "none";	
 	}
 }
 
@@ -79,10 +81,12 @@ function startGame(remain=3) {
 }
 
 function reloadStatus(data) {
-	if (!document.body.innerText.includes("You have been challenged!") && document.querySelectorAll('[data-qa="close-round-result"]')[0]===undefined) return;
+	let isPrepare = document.body.innerText.includes("You have been challenged!");
+	let isRound = document.querySelectorAll('[data-qa="close-round-result"]')[0]!==undefined;
+	if (!isPrepare && !isRound) return;
 	if (document.getElementById("ggeStatus")===null) roundPrepare();
 	if (data["ready"]===undefined) data["ready"] = [];
-	let eles = []//['<div id="ggeStatus" style="display:flex;justify-content:center;flex-direction:column;font-size: 1.3em;line-height: 2em;margin: 20px auto;text-align: center;width: 80%"><h3 style="margin-top: 10px;" id="readyTitle">全員が「Ready!」を押すと自動でゲームをスタートします</h3><div style="margin: 3px 0;">参加者</div>']
+	let eles = []
 	for (let player of data["players"]) {
 		eles.push('<div style="display:flex;justify-content:center;flex-direction:row;border-bottom: 1px solid;">')
 		eles.push('<div style="flex-basis: 50%;">'+player+'</div>')

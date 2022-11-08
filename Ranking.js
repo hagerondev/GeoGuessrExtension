@@ -1,11 +1,30 @@
 // result detect
-function createRankingElement(dataAll, userName) {
+function createRankingElement(original, userName) {
+	// ready
+	let isReady = new Set();
+	if (original["ready"]===undefined) original["ready"]=[];
+	for (let p of original["ready"]) isReady.add(p.toUpperCase());
+
 	// get this round
+	let dataAll = original["rankingAll"]
 	let round = -1;
 	for(let d of dataAll) {
 		round = Math.max(round, d[6]);
 	}
 	console.log("ver 2 This round is",round);
+
+	// total calc
+	let timeTotal = {};
+	let pointTotal = {};
+	for(let d of dataAll) {
+		let name = d[2].toUpperCase();
+		if (timeTotal[name]===undefined) timeTotal[name] = 0;
+		if (pointTotal[name]===undefined) pointTotal[name] = 0;
+		let t = Number(d[7]);
+		if (!isNaN(t)) timeTotal[name] += t;
+		t = Number(d[4]);
+		if (!isNaN(t)) pointTotal[name] += t;
+	}
 
 	// prepare only need data
 	let data = [];
@@ -13,12 +32,12 @@ function createRankingElement(dataAll, userName) {
 	dataAll.sort((a,b) => {
 		if (a[2]<b[2]) return 1;
 		if (a[2]>b[2]) return -1;
-		if (a[5]<b[5]) return 1;
-		if (a[5]>b[5]) return -1;
-		if (a[4]>b[4]) return 1;
-		if (a[4]<b[4]) return -1;
 		if (a[0]<b[0]) return 1;
 		if (a[0]>b[0]) return -1;
+		// if (a[5]<b[5]) return 1;
+		// if (a[5]>b[5]) return -1;
+		// if (a[4]>b[4]) return 1;
+		// if (a[4]<b[4]) return -1;
 		return 1;
 	})
 	console.log(dataAll)
@@ -29,36 +48,50 @@ function createRankingElement(dataAll, userName) {
 			data.push(d);
 		}
 	}
-	data.sort((a,b) => {
-		if (a[5]<b[5]) return 1;
-		else return -1;
-	})
-	for(var i=1;i<=data.length;i++) {
-		data[i-1][0] = i;
-	}
+	// data.sort((a,b) => {
+	// 	if (a[5]<b[5]) return 1;
+	// 	else return -1;
+	// })
+	// for(var i=1;i<=data.length;i++) {
+	// 	data[i-1][0] = i;
+	// }
 
 	let players = [];
+	let rnk = 1;
+	let timeMag = Number(original["timeMag"]);
+	if (isNaN(timeMag)) timeMag=0;
 	for (let d of data) {
 		let addStyle = "background-color: rgba(182, 175, 255, 0.365);"
 		if (d[2].toUpperCase()!==userName.toUpperCase()) addStyle = "";
 		let distV = d[3];
-		let roundV = d[4].toLocaleString();
-		let totalV = d[5].toLocaleString();
+		let distPoint = d[4];
+		let remain = d[7];
+		let readyState = "🔴";
+		if (isReady.has(d[2].toUpperCase())) readyState="🔵";
+		let timePoint = timeMag*remain;
+		let timeDiv = `${timePoint.toLocaleString()}<div style="font-size: 0.8em;">残り ${remain} s</div>`
+		if (timeMag===0) timeDiv = `残り ${remain} s`;
+		let roundSum = distPoint+timePoint;
+		let totalSum = pointTotal[d[2].toUpperCase()] + timeTotal[d[2].toUpperCase()]*timeMag;
 		if (d[6]!==round) {
-			distV = "推測中";
-			roundV = "推測中";
+			distV = "";
+			distPoint = "";
+			roundSum = "推測中";
+			timeDiv = "";
+			// totalSum = "推測中";
 		}
 		players.push(`
 		<div style="display: flex; flex-direction: column; border-radius: 3px; ${addStyle}" data-gge-round="${d[6]}">
 		  <div style="display: flex; flex-direction: row; margin: 10px 20px;">
-		    <div style="display: flex; align-items: center; flex-basis: 10%; justify-content: flex-start;">${d[0]}.</div>
-		    <div style="display: flex; align-items: center; flex-basis: 45%; justify-content: flex-start;">
+		    <div style="display: flex; align-items: center; flex-basis: 7%; justify-content: flex-start;">&nbsp;&nbsp;${rnk++}</div>
+		    <div style="display: flex; align-items: center; flex-basis: 37%; justify-content: flex-start;">
 		      <img style="border-radius: 50%; border: 3px solid gray; width: 35px; margin-right: 10px;"
-		      src="${d[1]}" />${d[2]}
+		      src="${d[1]}" />${d[2]}&nbsp;&nbsp;${readyState}
 		    </div>
-		    <div style="display: flex; align-items: center;  flex-basis: 15%; justify-content: flex-end;">${distV}</div>
-		    <div style="display: flex; align-items: center;  flex-basis: 15%; justify-content: flex-end;">${roundV}</div>
-		    <div style="display: flex; align-items: center;  flex-basis: 15%; justify-content: flex-end;">${totalV}</div>
+		    <div style="display: flex; align-items: center;  flex-basis: 14%; justify-content: flex-end;"><div style="text-align: right;">${timeDiv}</div></div>
+		    <div style="display: flex; align-items: center;  flex-basis: 14%; justify-content: flex-end;"><div style="text-align: right;">${distPoint.toLocaleString()}<div style="font-size: 0.8em;">${distV}</div></div></div>
+		    <div style="display: flex; align-items: center;  flex-basis: 14%; justify-content: flex-end;">${roundSum.toLocaleString()}</div>
+		    <div style="display: flex; align-items: center;  flex-basis: 14%; justify-content: flex-end;">${totalSum.toLocaleString()}</div>
 		  </div>
 		</div>
 		`)
@@ -69,11 +102,13 @@ function createRankingElement(dataAll, userName) {
 	  <div>
 	    <div style="display: flex; flex-direction: column;">
 	      <div style="display: flex; flex-direction: row; margin: 10px 20px; font-size: 0.9em; color: rgb(183, 183, 183); font-weight: bold;">
-	        <div style="display: flex; align-items: center; flex-basis: 10%; justify-content: flex-start;">順位</div>
-	        <div style="display: flex; align-items: center; flex-basis: 45%; justify-content: flex-start;">プレイヤー</div>
-	        <div style="display: flex; align-items: center; flex-basis: 15%; justify-content: flex-end;">距離</div>
-	        <div style="display: flex; align-items: center; flex-basis: 15%; justify-content: flex-end;">ROUND</div>
-	        <div style="display: flex; align-items: center; flex-basis: 15%; justify-content: flex-end;">TOTAL</div>
+	        <div style="display: flex; align-items: center; flex-basis: 7%; justify-content: flex-start;">順位</div>
+	        <div style="display: flex; align-items: center; flex-basis: 37%; justify-content: flex-start;">プレイヤー</div>
+	        <!--div style="display: flex; align-items: center; flex-basis: 15%; justify-content: flex-end;">距離</div-->
+	        <div style="display: flex; align-items: center; flex-basis: 14%; justify-content: flex-end;">TIME</div>
+	        <div style="display: flex; align-items: center; flex-basis: 14%; justify-content: flex-end;">DISTANCE</div>
+	        <div style="display: flex; align-items: center; flex-basis: 14%; justify-content: flex-end;">ROUND</div>
+	        <div style="display: flex; align-items: center; flex-basis: 14%; justify-content: flex-end;">TOTAL</div>
 	      </div>
 	      <div style="width: 100%; border-bottom: 1px solid gray;"></div>
 	    </div>
@@ -89,6 +124,7 @@ function createRankingElement(dataAll, userName) {
 }
 
 function readMyData() {
+	return readMyDataLast()
 	// distance
 	let dist;
 	let desc = document.querySelectorAll('[data-qa="guess-description"]')[0].getElementsByTagName("div");
@@ -108,9 +144,52 @@ function readMyData() {
 			let name = tds[1].innerText.slice(0,-1);
 			let round = Number(tds[2].innerText.split(" ")[0].replace(/,/g,""));
 			let total = Number(tds[3].innerText.split(" ")[0].replace(/,/g,""));
-			return [0,img,name,dist,round,total,1];
+			// rank, picture, username, distance, round points, total points, round, remain time
+			return [0,img,name,dist,round,total,1, beforeTime];
 		}
 	}
+}
+
+function readMyDataLast() {
+	// img
+	let tags = document.getElementsByTagName("img");
+	let img;
+	for(let tag of tags) {
+		if(tag.src.includes("pin")) {
+			img = tag.src;
+			break;
+		}
+	}
+
+	// name
+	let profile = JSON.parse(document.getElementById("__NEXT_DATA__").innerHTML)
+	let name = profile.props.middlewareResults[0].account.user.nick
+
+	// distance
+	let dist;
+	let desc = document.querySelectorAll('[data-qa="guess-description"]')[0].getElementsByTagName("div");
+	for (let div of desc) {
+		if (div.className.includes("guess-description-distance_distanceValue")) {
+			dist = div.innerText;
+			break;
+		}
+	}
+
+	// round points
+	let divs = document.querySelectorAll('[data-qa="result-view-bottom"]')[0].getElementsByTagName("div");
+	let roundPoints = 0;
+	for(let div of divs) {
+		if (div.className.startsWith("round-result_score_")) {
+			roundPoints = Number(div.innerText.split(" ")[0].replace(/,/g,""))
+			break;
+		}
+	}
+
+	// not set
+	let round = -1;
+	totalPoints = -1
+	// rank, picture, username, distance, round points, total points, round, remain time
+	return [0, img, name, dist, roundPoints, totalPoints, round, beforeTime]
 }
 
 function mergeRanking(data) {
@@ -213,12 +292,12 @@ function reloadRanking(data) {
 				removeRanking();
 			}else{
 				console.log("ALREADY ADDED")
-				let ele = createRankingElement(data["rankingAll"], userName);
+				let ele = createRankingElement(data, userName);
 				replaceRankingReload(ele);
 			}
 		},500);
 	}else if(isReload) {
-		let ele = createRankingElement(data["rankingAll"], userName);
+		let ele = createRankingElement(data, userName);
 		replaceRankingReload(ele);
 	}
 }

@@ -1,7 +1,7 @@
 {
   "name": "GeoGuessrExtension",
   "description": "Created by hageron",
-  "version": "1.1",
+  "version": "1.2",
   "manifest_version": 3,
   "action": {
     "default_icon": "icon.png"
@@ -15,6 +15,12 @@
         "Ready.js",
         "Ranking.js",
         "capture.js"
+      ]
+    },
+    {
+      "matches": ["https://www.geoguessr.com/results/*"],
+      "js": [
+        "results.js"
       ]
     }
   ],
