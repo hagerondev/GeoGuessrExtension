@@ -9,7 +9,7 @@ function createRankingElement(original, userName) {
 	let dataAll = original["rankingAll"]
 	let round = -1;
 	for(let d of dataAll) {
-		round = Math.max(round, d[6]);
+		if (d[2].toUpperCase()===userName.toUpperCase()) round=d[6];
 	}
 	console.log("ver 2 This round is",round);
 	let timeMag = Number(original["timeMag"]);
@@ -77,8 +77,8 @@ function createRankingElement(original, userName) {
 		let totalSum = pointTotal[d[2].toUpperCase()] + timeTotal[d[2].toUpperCase()]*timeMag;
 		if (d[6]!==round) {
 			distV = "";
-			distPoint = "";
-			roundSum = "推測中";
+			distPoint = `ラウンド${d[6]+1}`;
+			roundSum = `を推測中`;
 			timeDiv = "";
 			// totalSum = "推測中";
 		}
