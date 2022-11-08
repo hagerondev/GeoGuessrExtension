@@ -65,40 +65,51 @@ function updateRanking(original) {
 		if (timeMag===undefined) timeMag = 0;
 
 		// alter data
-		let result = {};
+		let resultD = {};
+		let pointSum = {};
+		let timeSum = {};
 		for(let d of data) {
 			let name = d[2].toUpperCase();
-			if (result[name]===undefined) {
-				result[name] = {
+			if (resultD[name]===undefined) {
+				resultD[name] = {
 					"name": name,
 					"img": d[1],
 					"data": [],
 				};
 			}
-			result[name]["data"].push({
+			resultD[name]["data"].push({
 				"dist": d[3],
 				"distPoints": d[4],
 				"time": d[7],
 				"timePoints": d[7]*timeMag,
 			})
+
+			let t1 = d[4];
+			let t2 = d[7];
+			if (pointSum[name]===undefined) pointSum[name]=0;
+			if (timeSum[name]===undefined) timeSum[name]=0;
+			if (!isNaN(t1)) pointSum[name]+=t1;
+			if (!isNaN(t2)) timeSum[name]+=t2;
 		}
-		console.log(result)
+		
+		let result = [];
+		for(let name in resultD) result.push(resultD[name]);
+		result.sort((a,b) => {
+			let aName = a["name"].toUpperCase();
+			let bName = b["name"].toUpperCase();
+			let aSum = pointSum[aName]+timeSum[aName]*timeMag;
+			let bSum = pointSum[bName]+timeSum[bName]*timeMag;
+			if (aSum<bSum) return 1;
+			else return -1;
+		})
 
 		let players = [];
 		let rnk = 1;
-		for(let name in result) {
+		for(let p of result) {
+			let name = p["name"];
 			let isMe = name.toUpperCase()===userName.toUpperCase();
 			let addStyle = "";
 			if (isMe) addStyle = "background-color: rgba(184, 202, 254, 0.3);"
-			let p = result[name];
-			let pointSum = 0;
-			let timeSum = 0;
-			for(let d of p["data"]) {
-				let t1 = d["distPoints"];
-				let t2 = d["timePoints"];
-				if (!isNaN(t1)) pointSum+=t1;
-				if (!isNaN(t2)) timeSum+=t2;
-			}
 			players.push(`
 			<div style="display: flex; padding: 15px 5px; ${addStyle}">
 				<div style="flex-basis: 5%; display: flex; align-items: center;">&nbsp;&nbsp;${rnk++}</div>
@@ -130,7 +141,7 @@ function updateRanking(original) {
 				<div style="font-weight: bold;">推測中</div></div>`);
 			}
 
-			let totalResult = pointSum+timeSum*timeMag;
+			let totalResult = pointSum[name]+timeSum[name]*timeMag;
 			players.push(`<div style="flex-basis: 13%; display: flex; flex-direction: column; justify-content: center;">
 				<div style="font-weight: bold;">${totalResult.toLocaleString()} pts</div></div></div>`);
 		}

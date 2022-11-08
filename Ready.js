@@ -54,7 +54,7 @@ function removeReady() {
 function startGame(remain=3) {
 	if (remain==3) {
 		// insert countdown
-		let ele = '<div id="gge-cnt" style="position: absolute;width: 100%;height: 100%;background-color: rgba(0,0,0,.8);top: 0;left: 0;text-align: center;font-size: 14em;padding-top: 1em;z-index:100; color:white;">3</div>'
+		let ele = '<div id="gge-cnt" style="font-family: Impact,Charcoal;position: absolute;width: 100%;height: 100%;background-color: rgba(0,0,0,.8);top: 0;left: 0;text-align: center;font-size: 14em;padding-top: 1em;z-index:100; color:white;">3</div>'
 		document.body.insertAdjacentHTML("afterend",ele);
 		setTimeout(startGame.bind(undefined, remain-1),1000);
 	}else if(remain>0) {
