@@ -12,6 +12,8 @@ function createRankingElement(original, userName) {
 		round = Math.max(round, d[6]);
 	}
 	console.log("ver 2 This round is",round);
+	let timeMag = Number(original["timeMag"]);
+	if (isNaN(timeMag)) timeMag=0;
 
 	// total calc
 	let timeTotal = {};
@@ -48,18 +50,18 @@ function createRankingElement(original, userName) {
 			data.push(d);
 		}
 	}
-	// data.sort((a,b) => {
-	// 	if (a[5]<b[5]) return 1;
-	// 	else return -1;
-	// })
-	// for(var i=1;i<=data.length;i++) {
-	// 	data[i-1][0] = i;
-	// }
+
+	data.sort((a,b) => {
+		let aName = a[2].toUpperCase();
+		let bName = b[2].toUpperCase();
+		let aTotal = timeTotal[aName]*timeMag+pointTotal[aName];
+		let bTotal = timeTotal[bName]*timeMag+pointTotal[bName];
+		if (aTotal<bTotal) return 1;
+		else return -1;
+	})
 
 	let players = [];
 	let rnk = 1;
-	let timeMag = Number(original["timeMag"]);
-	if (isNaN(timeMag)) timeMag=0;
 	for (let d of data) {
 		let addStyle = "background-color: rgba(182, 175, 255, 0.365);"
 		if (d[2].toUpperCase()!==userName.toUpperCase()) addStyle = "";
