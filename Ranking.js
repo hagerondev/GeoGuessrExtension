@@ -1,32 +1,55 @@
 // result detect
-function createRankingElement(data, userName) {
+function createRankingElement(dataAll, userName) {
 	// get this round
 	let round = -1;
-	for(let d of data) {
+	for(let d of dataAll) {
 		round = Math.max(round, d[6]);
 	}
-	round = String(round)
-	console.log("This round is",round);
+	console.log("ver 2 This round is",round);
 
-	let result = document.getElementsByTagName('tbody')
-	// data = [
-	// 	[1, "https://www.geoguessr.com/images/auto/48/48/ce/0/plain/pin/bdb14f46902805d1053688b0644d7604.png", "hageron1", "150 m", "420 points", "2,420 points"],
-	// 	[2, "https://www.geoguessr.com/images/auto/48/48/ce/0/plain/pin/bdb14f46902805d1053688b0644d7604.png", "hageron2", "150 m", "420 points", "2,420 points"],
-	// 	[3, "https://www.geoguessr.com/images/auto/48/48/ce/0/plain/pin/bdb14f46902805d1053688b0644d7604.png", "hageron3", "150 m", "420 points", "2,420 points"],
-	// ]
+	// prepare only need data
+	let data = [];
+	let used = new Set();
+	dataAll.sort((a,b) => {
+		if (a[2]<b[2]) return 1;
+		if (a[2]>b[2]) return -1;
+		if (a[5]<b[5]) return 1;
+		if (a[5]>b[5]) return -1;
+		if (a[4]>b[4]) return 1;
+		if (a[4]<b[4]) return -1;
+		if (a[0]<b[0]) return 1;
+		if (a[0]>b[0]) return -1;
+		return 1;
+	})
+	console.log(dataAll)
+	for(let d of dataAll) {
+		let name = d[2].toUpperCase();
+		if (!used.has(name)) {
+			used.add(name);
+			data.push(d);
+		}
+	}
+	data.sort((a,b) => {
+		if (a[5]<b[5]) return 1;
+		else return -1;
+	})
+	for(var i=1;i<=data.length;i++) {
+		data[i-1][0] = i;
+	}
 
 	let players = [];
 	for (let d of data) {
 		let addStyle = "background-color: rgba(182, 175, 255, 0.365);"
 		if (d[2].toUpperCase()!==userName.toUpperCase()) addStyle = "";
 		let distV = d[3];
-		let roundV = d[4];
+		let roundV = d[4].toLocaleString();
+		let totalV = d[5].toLocaleString();
 		if (d[6]!==round) {
 			distV = "推測中";
 			roundV = "推測中";
 		}
 		players.push(`
-		<div style="display: flex; flex-direction: column; border-radius: 3px; ${addStyle}">
+		<div style="display: flex; flex-direction: column; border-radius: 3px; ${addStyle}" data-gge-round="${d[6]}">
 		  <div style="display: flex; flex-direction: row; margin: 10px 20px;">
 		    <div style="display: flex; align-items: center; flex-basis: 10%; justify-content: flex-start;">${d[0]}.</div>
 		    <div style="display: flex; align-items: center; flex-basis: 45%; justify-content: flex-start;">
@@ -35,7 +58,7 @@ function createRankingElement(data, userName) {
 		    </div>
 		    <div style="display: flex; align-items: center;  flex-basis: 15%; justify-content: flex-end;">${distV}</div>
 		    <div style="display: flex; align-items: center;  flex-basis: 15%; justify-content: flex-end;">${roundV}</div>
-		    <div style="display: flex; align-items: center;  flex-basis: 15%; justify-content: flex-end;">${d[5]}</div>
+		    <div style="display: flex; align-items: center;  flex-basis: 15%; justify-content: flex-end;">${totalV}</div>
 		  </div>
 		</div>
 		`)
@@ -184,20 +207,18 @@ function reloadRanking(data) {
 	if (tbody!==undefined) {
 		setTimeout(function() {
 			if (!alreadyAdded(data)) {
-				let newRanking = mergeRanking(data);
-				updateRanking(newRanking);
-				// console.log("nr",newRanking)
-				let ele = createRankingElement(newRanking, userName);
-				// console.log("ele",ele)
-				// replaceRanking(ele);
+				// let newRanking = mergeRanking(data);
+				// updateRanking(newRanking);
+				updateRankingMyData(readMyData())
 				removeRanking();
-				replaceRankingReload(ele);
 			}else{
 				console.log("ALREADY ADDED")
+				let ele = createRankingElement(data["rankingAll"], userName);
+				replaceRankingReload(ele);
 			}
 		},500);
 	}else if(isReload) {
-		let ele = createRankingElement(data["ranking"], userName);
+		let ele = createRankingElement(data["rankingAll"], userName);
 		replaceRankingReload(ele);
 	}
 }

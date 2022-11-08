@@ -70,4 +70,18 @@ function updateRanking(data) {
 	}))
 }
 
+
+function updateRankingMyData(data) {
+	console.log("SEND RANKING MY DATA")
+	ws.ws.send(JSON.stringify({
+		"state": "ranking",
+		"action": "updateMe",
+		"content": {
+			"rankingMe": data,
+			"userID": userName,
+			"gameID": gameID,
+		},
+	}))
+}
+
 const ws = new WS();

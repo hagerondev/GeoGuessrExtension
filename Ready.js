@@ -102,12 +102,3 @@ function reloadStatus(data) {
 	}
 }
 
-// let nowRound = 0;
-
-// function roundChecker() {
-// 	console.log("round",nowRound)
-// 	if (nowRound===0) {
-// 		if (!document.body.innerText.includes("You have been challenged!")) nowRound++;
-// 	}
-// }
-// setInterval(roundChecker, 1000);
