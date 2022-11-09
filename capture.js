@@ -1,40 +1,46 @@
 // ready button detect
 let beforeButtonBool = false;
 function guessDetector() {
+	let memo = "start";
 	let button = document.querySelectorAll('[data-qa="close-round-result"]')[0];
 	
 	if (button!==undefined && beforeButtonBool===false) {
 		beforeButtonBool = true;
 		// req
-		if (button.innerText.toUpperCase()==="PLAY NEXT ROUND") {
-			guess();
-			// setTimeout(guess,2000)
-		}
+		guess();
+		memo = "guess"
+		setTimeout(guessDetector, 5000)
 	}else if(button===undefined && beforeButtonBool===true){
 		beforeButtonBool = false;
+		memo = "start map"
+		setTimeout(guessDetector, 1300)
+	}else{
+		memo = "now map"
+		setTimeout(guessDetector, 1300)
 	}
 }
-setInterval(guessDetector, 1300)
+// setInterval(guessDetector, 1300)
+setTimeout(guessDetector, 1300)
 
-let beforeRankingBool = false;
-function rankingDetector() {
-	let button = document.getElementsByTagName("tbody")[0];
+// let beforeRankingBool = false;
+// function rankingDetector() {
+// 	let button = document.getElementsByTagName("tbody")[0];
 	
-	if (button!==undefined && beforeRankingBool===false) {
-		beforeRankingBool = true;
-		// req
+// 	if (button!==undefined && beforeRankingBool===false) {
+// 		beforeRankingBool = true;
+// 		// req
 		
-	}else if(button===undefined && beforeRankingBool===true){
-		beforeRankingBool = false;
-	}
-}
-setInterval(guessDetector, 1000)
+// 	}else if(button===undefined && beforeRankingBool===true){
+// 		beforeRankingBool = false;
+// 	}
+// }
+// setInterval(rankingDetector, 1000)
 
-let beforeTime = -1;
+let beforeTime = 0;
 function timerDetector() {
 	let timeStr = document.getElementsByClassName("clock-timer_timer__Ni1Wy")[0];
 	if (timeStr===undefined) {
-		beforeTime = -1;
+		beforeTime = 0;
 		return;
 	};
 	let info = timeStr.innerText.split(":");
