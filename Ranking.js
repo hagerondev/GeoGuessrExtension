@@ -75,6 +75,7 @@ function createRankingElement(original, userName) {
 		if (timeMag===0) timeDiv = `残り ${remain} s`;
 		let roundSum = distPoint+timePoint;
 		let totalSum = pointTotal[d[2].toUpperCase()] + timeTotal[d[2].toUpperCase()]*timeMag;
+		if (distV===null) distV = "時間切れ";
 		if (d[6]!==round) {
 			distV = "";
 			distPoint = `ラウンド${d[6]+1}`;
