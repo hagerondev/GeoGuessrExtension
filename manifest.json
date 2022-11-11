@@ -1,7 +1,7 @@
 {
   "name": "GeoGuessrExtension",
   "description": "Created by hageron",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "manifest_version": 3,
   "action": {
     "default_icon": "icon.png"

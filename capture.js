@@ -1,5 +1,6 @@
 // ready button detect
 let beforeButtonBool = false;
+let dataSended = false;
 function guessDetector() {
 	let memo = "start";
 	let button = document.querySelectorAll('[data-qa="close-round-result"]')[0];
@@ -14,10 +15,13 @@ function guessDetector() {
 		beforeButtonBool = false;
 		memo = "start map"
 		setTimeout(guessDetector, 1300)
+		// start timer
+		dataSended = false;
 	}else{
 		memo = "now map"
 		setTimeout(guessDetector, 1300)
 	}
+	console.log("GUESS DETECTOR",memo, beforeTime,dataSended)
 }
 // setInterval(guessDetector, 1300)
 setTimeout(guessDetector, 1300)
@@ -38,6 +42,7 @@ setTimeout(guessDetector, 1300)
 
 let beforeTime = 0;
 function timerDetector() {
+	if (dataSended) return;
 	let timeStr = document.getElementsByClassName("clock-timer_timer__Ni1Wy")[0];
 	if (timeStr===undefined) {
 		beforeTime = 0;

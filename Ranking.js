@@ -226,9 +226,9 @@ function alreadyAdded(data) {
 	let ranking = data["ranking"];
 	if (ranking===undefined) ranking = [];
 	for(let d of ranking) {
-		console.log("check",myData,d)
 		let same = true;
-		for(var i=1;i<d.length;i++) {
+		// rank, picture, username, distance, round points, total points, round, remain time
+		for(var i=1;i<6;i++) {
 			if (myData[i]!==d[i]) {
 				same = false;
 				break
@@ -291,6 +291,9 @@ function reloadRanking(data) {
 			if (!alreadyAdded(data)) {
 				// let newRanking = mergeRanking(data);
 				// updateRanking(newRanking);
+				if (dataSended) return;
+				// stop timer
+				dataSended = true;
 				updateRankingMyData(readMyData())
 				removeRanking();
 			}else{
