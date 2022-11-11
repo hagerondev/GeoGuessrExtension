@@ -21,6 +21,7 @@ class WS {
 			console.log("ws receive",resData)
 			if (reloadStatus) reloadStatus(resData);
 			if (reloadRanking) reloadRanking(resData);
+			if (reloadSettings) reloadSettings(resData);
 
 		}
 		this.ws.onclose = (event) => {
@@ -81,7 +82,20 @@ function updateRankingMyData(data) {
 			"userID": userName,
 			"gameID": gameID,
 		},
-	}))
+	}));
+}
+
+function updateTimeMag(mag) {
+	console.log("SEND TimeMag",mag)
+	ws.ws.send(JSON.stringify({
+		"state": "settings",
+		"action": "timeMag",
+		"content": {
+			"timeMag": mag,
+			"userID": userName,
+			"gameID": gameID,
+		},
+	}));
 }
 
 const ws = new WS();

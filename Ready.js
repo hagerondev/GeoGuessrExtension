@@ -7,9 +7,25 @@ const gameID = window.location.href.split("/")[window.location.href.split("/").l
 if (document.body.innerText.includes("You have been challenged!")) {
 	let entry = `
 	<div id="ggeStatusCover" style="display:flex;justify-content:center;flex-direction:column;font-size: 1.3em;line-height: 2em;margin: 20px auto;text-align: center;width: 80%">
-	    <h3 style="margin-top: 10px;">全員が「Ready!」を押すと自動でゲームをスタートします</h3>
-	    <div style="margin: 3px 0;">参加者</div>
-	    <div id="ggeStatus"></div>
+		<h3 style="margin-top: 10px;">全員が「Ready!」を押すと自動でゲームをスタートします</h3>
+		<div style="display: flex;justify-content: center;padding: 10px;">
+			<div>残り時間を得点に追加：</div>
+			<select id="ID-timeMag" name="timeMag" style="color:white;width: 30%;background-color: rgba(0,0,0,0);border: 1px solid white;padding: 11px;">
+				<option value="0" style="color:black">設定無し</option>
+				<option value="1" style="color:black">1倍</option>
+				<option value="2" style="color:black">2倍</option>
+				<option value="3" style="color:black">3倍</option>
+				<option value="4" style="color:black">4倍</option>
+				<option value="5" style="color:black">5倍</option>
+				<option value="6" style="color:black">6倍</option>
+				<option value="7" style="color:black">7倍</option>
+				<option value="8" style="color:black">8倍</option>
+				<option value="9" style="color:black">9倍</option>
+				<option value="10" style="color:black">10倍</option>
+			</select>
+		</div>
+		<div style="margin: 3px 0;">参加者</div>
+		<div id="ggeStatus"></div>
 	</div>
 	`
 	// get start game class
@@ -20,6 +36,11 @@ if (document.body.innerText.includes("You have been challenged!")) {
 	start_button.insertAdjacentHTML("afterend",ready_button)
 	// start_button.style.display = "none";
 	document.getElementById("readyButton").addEventListener("click", removeReady);
+	// send mag
+	const select = document.getElementById("ID-timeMag");
+	select.addEventListener("change", () => {
+		updateTimeMag(select.value);
+	})
 }
 // document.body.innerText.includes("PLAY NEXT ROUND")
 
@@ -28,9 +49,9 @@ function roundPrepare() {
 	let visible = false;
 	let entry = `
 	<div id="ggeStatusCover" style="display:flex;justify-content:center;flex-direction:column;font-size: 1.2em;line-height: 2em;margin: 20px auto;text-align: center;">
-	    <h3 style=""></h3>
-	    <div style="margin: 3px 0;"></div>
-	    <div id="ggeStatus"></div>
+		<h3 style=""></h3>
+		<div style="margin: 3px 0;"></div>
+		<div id="ggeStatus"></div>
 	</div>
 	`
 	if (!visible) entry = '<div style="display:none">'+entry+'</div>'
@@ -106,3 +127,11 @@ function reloadStatus(data) {
 	}
 }
 
+function reloadSettings(data) {
+	let select = document.getElementById("ID-timeMag");
+	if (select!==undefined) {
+		let mag = data["timeMag"];
+		if (mag===undefined) mag = 0;
+		select.options[Number(mag)].selected = true;
+	}
+}
