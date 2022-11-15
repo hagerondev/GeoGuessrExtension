@@ -129,7 +129,7 @@ function reloadStatus(data) {
 
 function reloadSettings(data) {
 	let select = document.getElementById("ID-timeMag");
-	if (select!==undefined) {
+	if (select!==null) {
 		let mag = data["timeMag"];
 		if (mag===undefined) mag = 0;
 		select.options[Number(mag)].selected = true;
